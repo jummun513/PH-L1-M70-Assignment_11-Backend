@@ -44,6 +44,14 @@ async function run() {
             res.send(car);
         });
 
+        // post data 
+        app.post('/cars', async (req, res) => {
+            const newCar = req.body;
+            // const result = await carData.insertOne(newCar);
+            console.log(newCar);
+            res.send('complete');
+        });
+
         console.log("You successfully connected to MongoDB!");
     }
 

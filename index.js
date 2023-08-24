@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
-const app = express();
 const port = process.env.PORT || 5000;
 
+const app = express();
 
 // use middleware
 app.use(cors());
@@ -26,14 +26,22 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
-        const database = client.db("AutoHive");
-        const carData = database.collection("carData");
+        const database = client.db("Auto_Hive");
+        const carData = database.collection("car_data");
 
         app.get('/cars', async (req, res) => {
             const query = {};
             const cursor = carData.find(query);
-            const data = await cursor.toArray();
-            res.send(data);
+            const cars = await cursor.toArray();
+            res.send(cars);
+        });
+
+        // find single data of car 
+        app.get('/car/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(`${id}`) };
+            const car = await carData.findOne(query);
+            res.send(car);
         });
 
         console.log("You successfully connected to MongoDB!");

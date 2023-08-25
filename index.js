@@ -53,12 +53,19 @@ async function run() {
                 $set: req.body,
             };
             const result = await carData.updateOne(query, updateDoc);
-
-            // console.log(
-            //     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
-            // );
+            console.log(
+                `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+            );
         });
 
+
+        // insert a data
+        app.post('/cars', async (req, res) => {
+            const data = req.body;
+            const result = await carData.insertOne(data);
+            res.send(result);
+            console.log(`A document was inserted with the _id: ${result.insertedId}`);
+        });
         console.log("You successfully connected to MongoDB!");
     }
 

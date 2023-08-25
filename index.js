@@ -29,6 +29,7 @@ async function run() {
         const database = client.db("Auto_Hive");
         const carData = database.collection("car_data");
 
+        // get all data
         app.get('/cars', async (req, res) => {
             const query = {};
             const cursor = carData.find(query);
@@ -44,12 +45,18 @@ async function run() {
             res.send(car);
         });
 
-        // post data 
-        app.post('/cars', async (req, res) => {
-            const newCar = req.body;
-            // const result = await carData.insertOne(newCar);
-            console.log(newCar);
-            res.send('complete');
+        // update data 
+        app.post('/update-car/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(`${id}`) };
+            const updateDoc = {
+                $set: req.body,
+            };
+            const result = await carData.updateOne(query, updateDoc);
+
+            // console.log(
+            //     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+            // );
         });
 
         console.log("You successfully connected to MongoDB!");

@@ -66,6 +66,22 @@ async function run() {
             res.send(result);
             console.log(`A document was inserted with the _id: ${result.insertedId}`);
         });
+
+
+        // delete a data
+        app.delete('/car/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await carData.deleteOne(query);
+            res.send(result);
+            if (result.deletedCount === 1) {
+                console.log("Successfully deleted one document.");
+            } else {
+                console.log("No documents matched the query. Deleted 0 documents.");
+            }
+        });
+
+
         console.log("You successfully connected to MongoDB!");
     }
 

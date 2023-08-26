@@ -53,9 +53,11 @@ async function run() {
                 $set: req.body,
             };
             const result = await carData.updateOne(query, updateDoc);
-            console.log(
-                `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
-            );
+            const find = await carData.findOne(query);
+            res.send(find);
+            // console.log(
+            //     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+            // );
         });
 
 

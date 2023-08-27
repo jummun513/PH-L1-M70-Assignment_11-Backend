@@ -89,13 +89,26 @@ async function run() {
         // Insert or update users
         app.post('/users', async (req, res) => {
             const data = req.body;
-            const query = { email: data.email };
-            const update = { $set: data };
+            // const query = { email: data.email };
+            const query = { _id: new ObjectId(data._id) };;
+            const update = {
+                $set: {
+                    wishedItemId: data.wishedItemId,
+                }
+            };
             const options = { upsert: true };
             console.log(data);
             const result = await userData.updateOne(query, update, options);
             res.send(result);
             console.log(`A document was inserted with the _id: ${result.insertedId}`);
+        });
+
+        // find single userData from users 
+        app.get('/user/:emailNo', async (req, res) => {
+            const key = req.params.emailNo;
+            const query = { email: key };
+            const user = await userData.findOne(query);
+            res.send(user);
         });
 
 

@@ -43,7 +43,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         const database = client.db("Auto_Hive");
         const carData = database.collection("car_data");
         const userData = database.collection("Users");
@@ -120,8 +120,9 @@ async function run() {
             console.log(`A document was inserted with the _id: ${result.insertedId}`);
         });
 
-        // find single userData from users 
-        app.get('/user/:emailNo', verifyJwt, async (req, res) => {
+        // find single userData from users JWT is implement with email password login
+        // app.get('/user/:emailNo', verifyJwt, async (req, res) => {
+        app.get('/user/:emailNo', async (req, res) => {
             // const decodedEmail = req?.decoded?.email;
             // console.log(decodedEmail);
             // const authrize = req.headers.authorization;

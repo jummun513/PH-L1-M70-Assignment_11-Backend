@@ -12,6 +12,23 @@ app.use(cors());
 app.use(express.json());
 
 
+function verifyJwt(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: "Unauthorized access" });
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'Forbidden access' })
+        }
+        // console.log('decoded', decoded);
+        req.decoded = decoded;
+    })
+    next();
+}
+
+
 const uri = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@cluster0.03hem.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -104,11 +121,20 @@ async function run() {
         });
 
         // find single userData from users 
-        app.get('/user/:emailNo', async (req, res) => {
+        app.get('/user/:emailNo', verifyJwt, async (req, res) => {
+            // const decodedEmail = req?.decoded?.email;
+            // console.log(decodedEmail);
+            // const authrize = req.headers.authorization;
+            // console.log(authrize);
             const key = req.params.emailNo;
+            // if (key === decodedEmail) {
             const query = { email: key };
             const user = await userData.findOne(query);
             res.send(user);
+            // }
+            // else {
+            // res.status(403).send({ message: "Forbidden Access" });
+            // }
         });
 
 

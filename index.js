@@ -163,7 +163,6 @@ app.get('/', (req, res) => {
     res.send("Server starts to running");
 });
 
-
 app.listen(port, () => {
     console.log('Listening to port', port);
 });

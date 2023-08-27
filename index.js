@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ async function run() {
         await client.connect();
         const database = client.db("Auto_Hive");
         const carData = database.collection("car_data");
+        const userData = database.collection("Users");
 
         // get all data
         app.get('/cars', async (req, res) => {
@@ -66,7 +68,7 @@ async function run() {
             const data = req.body;
             const result = await carData.insertOne(data);
             res.send(result);
-            console.log(`A document was inserted with the _id: ${result.insertedId}`);
+            console.log(`A document was inserted with the _id: ${result.insertedId}` || `${result.matchedCount} document(s) matched the filter`);
         });
 
 
@@ -82,6 +84,29 @@ async function run() {
                 console.log("No documents matched the query. Deleted 0 documents.");
             }
         });
+
+
+        // Insert or update users
+        app.post('/users', async (req, res) => {
+            const data = req.body;
+            const query = { email: data.email };
+            const update = { $set: data };
+            const options = { upsert: true };
+            console.log(data);
+            const result = await userData.updateOne(query, update, options);
+            res.send(result);
+            console.log(`A document was inserted with the _id: ${result.insertedId}`);
+        });
+
+
+        // JWT auth
+        app.post('/login', (req, res) => {
+            const user = req.body;
+            const access = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1d'
+            })
+            res.send(access);
+        })
 
 
         console.log("You successfully connected to MongoDB!");
